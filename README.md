@@ -1,4 +1,4 @@
-## Frontend
+## Infos frontend :
 
 Cette API est consommée par l'extension navigateur officielle, dont le code se trouve ici :
 ➡️ **[pm-extension](https://github.com/Loki1412e/pm-extension)**
