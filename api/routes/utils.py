@@ -55,12 +55,5 @@ async def healthcheck(db: AsyncSession = Depends(get_db)):
             "api": "running",
             "db_status": db_status,
             "db_error": db_error
-        },
-        "meta": {
-            "name": "Password Manager API",
-            "identifier": "passmanager_api",
-            "version": "0.1.0",
-            "documentation_url": f"{TRAEFIK_PATH_PREFIX}/docs",
-            "timestamp": str(__import__('datetime').datetime.utcnow().isoformat()),
         }
     }
