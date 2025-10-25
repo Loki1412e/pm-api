@@ -1,0 +1,49 @@
+networks:
+  traefik:
+    name: traefik
+    driver: bridge
+    
+services:
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    restart: always
+    command:
+      # Dashboard et API
+      - "--api=true"
+      # - "--api.insecure=true" # temp
+      - "--providers.docker=true"
+      # Entrypoints HTTP/HTTPS
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Certificat auto-signé (TLSChallenge)
+      - "--certificatesresolvers.selfsigned.acme.tlschallenge=true"
+      - "--certificatesresolvers.selfsigned.acme.storage=/letsencrypt/acme.json"
+      # # Logs
+      # - "--log.level=DEBUG"
+      # - "--accesslog=true"
+      # - "--accesslog.format=json"
+      # - "--accesslog.filepath=/logs/access.log"
+      # - "--log.filePath=/logs/traefik.log"
+    volumes:
+      # - ./logs:/logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    ports:
+      # - "127.0.0.1:80:80"
+      # - "127.0.0.1:443:443"
+      # - "192.168.1.116:443:443"
+      - "80:80"
+      - "443:443"
+    labels:
+      # Router pour le dashboard
+      - 'traefik.http.routers.dashboard.rule=PathPrefix(`/dashboard`)'
+      - 'traefik.http.routers.dashboard.service=api@internal'
+      - 'traefik.http.routers.dashboard.entrypoints=websecure'
+      - 'traefik.http.routers.dashboard.tls=true'
+      # Middleware pour basicAuth
+      - 'traefik.http.middlewares.dashboard_auth.basicauth.users=loub:$$2y$$05$$Tl0pw8i1I3mWfpsCgheYn.rHh1iBv/kq90SkH4apPaAAX2PeBRk1a/'
+      # Attacher les middlewares au router
+      - 'traefik.http.routers.dashboard.middlewares=dashboard_auth'
+    networks:
+      - traefik
