@@ -30,9 +30,7 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared
     restart: always
-    volumes:
-      - ./cloudflared/files:/etc/cloudflared:ro
-    command: tunnel --config /etc/cloudflared/config.yml run web-tunnel
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TUNNEL_TOKEN}
     networks:
       - traefik_proxy
     depends_on:
