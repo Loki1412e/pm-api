@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from db.session import get_db, engine, wait_for_db
 from sqlalchemy.exc import SQLAlchemyError
-from core.config import TRAEFIK_PATH_PREFIX
+from core.config import URL_PATH_PREFIX
 from core.credentialPassword import generateCredentialPassword
 from core.logging import logger # ex: logger.info("User created successfully")
 

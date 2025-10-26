@@ -4,7 +4,7 @@ import os
 
 API_PORT = int(os.getenv("API_PORT", 8000))
 
-TRAEFIK_PATH_PREFIX = os.environ.get("TRAEFIK_PATH_PREFIX")
+URL_PATH_PREFIX = os.environ.get("URL_PATH_PREFIX")
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 

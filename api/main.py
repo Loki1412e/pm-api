@@ -5,7 +5,7 @@ import json
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from core.config import TRAEFIK_PATH_PREFIX, API_PORT
+from core.config import URL_PATH_PREFIX, API_PORT
 
 from db.session import engine, wait_for_db
 from db.base import Base
@@ -17,7 +17,7 @@ app = FastAPI(
     title="Password Manager API",
     description="API pour gérer les utilisateurs et leurs credentials",
     version="0.1.1",
-    root_path=TRAEFIK_PATH_PREFIX,
+    root_path=URL_PATH_PREFIX,
     docs_path="/docs",
     redoc_path="/redoc",
     openapi_path="/openapi.json",
@@ -44,7 +44,7 @@ async def add_meta_to_response(request: Request, call_next):
     response = await call_next(request)
 
     # Ne pas wrapper les docs, openapi, ou les réponses non-JSON
-    if not request.url.path.startswith(TRAEFIK_PATH_PREFIX) or \
+    if not request.url.path.startswith(URL_PATH_PREFIX) or \
        request.url.path in (app.docs_url, app.redoc_url, app.openapi_url) or \
        response.media_type != "application/json":
         return response

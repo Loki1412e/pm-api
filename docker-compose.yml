@@ -29,7 +29,7 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ALGO=${JWT_ALGO}
       - API_PORT=${API_PORT}
-      - TRAEFIK_PATH_PREFIX=${TRAEFIK_PATH_PREFIX}
+      - URL_PATH_PREFIX=${URL_PATH_PREFIX}
     depends_on:
       - postgres
     networks:
