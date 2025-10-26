@@ -1,5 +1,5 @@
 networks:
-  traefik:
+  traefik_proxy:
     external: true
     
 services:
@@ -16,7 +16,8 @@ services:
     volumes:
       - ./postgres/data:/var/lib/postgresql/data
     networks:
-      - traefik
+      - default
+      - traefik_proxy
   
   fastapi:
     build: .
@@ -31,18 +32,33 @@ services:
       - API_PORT=8000 # !!! doit etre le mm !!!
     depends_on:
       - postgres
+    networks:
+      - default
+      - traefik_proxy
     # ports:          # temp
     #   - "8000:8000" # temp
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.pm_api.rule=PathPrefix(`/pm/api`)" # !!! doit etre le mm !!!
-      # - "traefik.http.routers.pm_api.rule=Host(`raspi5.lan`) && PathPrefix(`/pm/api`)" # !!! doit etre le mm !!!
-      # - "traefik.http.routers.pm_api.entrypoints=web"
-      - "traefik.http.routers.pm_api.entrypoints=websecure"
-      - "traefik.http.routers.pm_api.tls.certresolver=selfsigned"
-      - "traefik.http.services.pm_api.loadbalancer.server.port=8000" # !!! doit etre le mm !!!
-    networks:
-      - traefik
+          # --- Configuration pour Traefik ---
+          - "traefik.enable=true" # Indique à Traefik de gérer ce conteneur
+          - "traefik.http.routers.pm-api.rule=PathPrefix(`/pm/api`)" # !!! doit etre le mm !!!
+          - "traefik.docker.network=traefik_proxy" # Spécifie le nom RÉEL du réseau que Traefik doit utiliser pour joindre ce conteneur
+
+          # --- Routeur HTTP (pour la redirection) ---
+          # Optionnel mais propre : crée un routeur HTTP juste pour la redirection
+          - "traefik.http.routers.pm-api-http.rule=Host(`raspi5.tailaa6370.ts.net`)"
+          - "traefik.http.routers.pm-api-http.entrypoints=web" # Écoute sur HTTP (port 80)
+          # Ce routeur n'a pas besoin de service, la redirection est gérée par l'entrypoint
+
+          # --- Routeur HTTPS (le principal) ---
+          - "traefik.http.routers.pm-api-secure.rule=Host(`raspi5.tailaa6370.ts.net`)" # Ton nom de machine Tailscale exact
+          - "traefik.http.routers.pm-api-secure.entrypoints=websecure" # Écoute sur HTTPS (port 443)
+          - "traefik.http.routers.pm-api-secure.tls=true" # Active TLS
+          - "traefik.http.routers.pm-api-secure.tls.certresolver=tailscale" # TRÈS IMPORTANT: Utilise le résolveur Tailscale
+          - "traefik.http.routers.pm-api-secure.service=pm-api-service" # Nom du service Traefik à utiliser
+
+          # --- Service Traefik ---
+          # Définit comment Traefik doit joindre ton API (qui écoute en HTTP sur le port 8000 DANS Docker)
+          - "traefik.http.services.pm-api-service.loadbalancer.server.port=8000" # !!! doit etre le mm !!!
 
   adminer:
     image: adminer
@@ -51,9 +67,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pm_adminer.rule=PathPrefix(`/pm/adminer`)"
-      # - "traefik.http.routers.pm_api.entrypoints=web"
+      # - "traefik.http.routers.pm-api.entrypoints=web"
       - "traefik.http.routers.pm_adminer.entrypoints=websecure"
       - "traefik.http.routers.pm_adminer.tls.certresolver=selfsigned"
       - "traefik.http.services.pm_adminer.loadbalancer.server.port=8080"
     networks:
-      - traefik
+      - default
+      - traefik_proxy
