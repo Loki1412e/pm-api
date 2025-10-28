@@ -1,9 +1,9 @@
 import uvicorn
-import datetime
+from datetime import datetime, timezone # <--- VÉRIFIEZ CECI
 import json
 
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Request, Response # <--- VÉRIFIEZ CECI
+from fastapi.responses import JSONResponse # <--- VÉRIFIEZ CECI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import URL_PATH_PREFIX, API_PORT
 
@@ -37,43 +37,41 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Middleware
 @app.middleware("http")
 async def add_meta_to_response(request: Request, call_next):
-    
     response = await call_next(request)
-
-    # Ne pas wrapper les docs, openapi, ou les réponses non-JSON
-    if not request.url.path.startswith(URL_PATH_PREFIX) or \
-       request.url.path in (app.docs_url, app.redoc_url, app.openapi_url) or \
-       response.media_type != "application/json":
-        return response
-
-    # Lire le corps de la réponse (nécessaire car c'est un stream)
-    response_body_bytes = b""
-    async for chunk in response.body_iterator:
-        response_body_bytes += chunk
     
-    try:
-        data = json.loads(response_body_bytes.decode('utf-8'))
-    except (json.JSONDecodeError, UnicodeDecodeError):
-        # Réponse non-JSON (ex: 304 Not Modified), on la retourne telle quelle
-        return Response(content=response_body_bytes, 
-                        status_code=response.status_code, 
-                        headers=dict(response.headers))
-
-    final_meta = {
-        "name": app.title,
-        "identifier": app.state.identifier,
-        "version": app.version,
-        "documentation_url": f"/{app.root_path.lstrip('/')}/{app.docs_url.lstrip('/')}",
-        "timestamp": datetime.utcnow().isoformat(),
-    }
-
-    # On rajoute meta dans la réponse
-    data["meta"] = final_meta
+    # Pour les réponses JSON uniquement
+    if isinstance(response, JSONResponse) or response.headers.get("content-type") == "application/json":
+        # Lire le body existant
+        body = b""
+        async for chunk in response.body_iterator:
+            body += chunk
+        
+        try:
+            # Parser et modifier
+            data = json.loads(body)
+            data["meta"] = {
+                "name": app.title,
+                "version": app.version,
+                "documentation_url": f"{URL_PATH_PREFIX}/docs",
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+            
+            # Créer nouvelle réponse avec les headers corrects (Content-Length sera recalculé)
+            return JSONResponse(
+                content=data,
+                status_code=response.status_code
+            )
+        except json.JSONDecodeError:
+            # Si le body n'est pas du JSON valide, retourner la réponse originale
+            return Response(
+                content=body,
+                status_code=response.status_code,
+                headers=dict(response.headers)
+            )
     
-    return JSONResponse(content=data, status_code=response.status_code)
+    return response
 
 # Startup : attendre que la DB soit prête
 @app.on_event("startup")
