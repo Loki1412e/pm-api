@@ -18,9 +18,9 @@ app = FastAPI(
     description="API pour gérer les utilisateurs et leurs credentials",
     version="0.1.1",
     root_path=URL_PATH_PREFIX,
-    docs_path="/docs",
-    redoc_path="/redoc",
-    openapi_path="/openapi.json",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
 )
 app.state.identifier = "passmanager_api"
 
@@ -54,7 +54,7 @@ async def add_meta_to_response(request: Request, call_next):
             data["meta"] = {
                 "name": app.title,
                 "version": app.version,
-                "documentation_url": f"{URL_PATH_PREFIX}/docs",
+                "documentation_url": f"{app.root_path}/{app.docs_url.lstrip('/')}",
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
             
