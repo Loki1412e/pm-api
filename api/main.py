@@ -54,6 +54,7 @@ async def add_meta_to_response(request: Request, call_next):
             data["meta"] = {
                 "name": app.title,
                 "version": app.version,
+                "identifier": "passmanager_api",
                 "documentation_url": f"{app.root_path}/{app.docs_url.lstrip('/')}",
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
