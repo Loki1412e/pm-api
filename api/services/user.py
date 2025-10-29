@@ -53,7 +53,7 @@ async def login(username: str, password: str, jwt_expir: int, db) -> dict:
         for c in rows
     ]
 
-    return {"status": 200, "message": "Login successful", "token": token, "credentials": credentials}
+    return {"status": 200, "message": "Login successful", "token": token, "masterSalt": user.masterSalt, "credentials": credentials}
 
 
 async def count(db) -> dict:

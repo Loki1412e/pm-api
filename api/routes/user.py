@@ -18,7 +18,7 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
 @router.post("/login", response_model=dict)
 async def login_user(user: UserLogin, db: AsyncSession = Depends(get_db)):
     """
-    Login. Renvoie un JWT pour authentification + Credentials (Vault)
+    Login. Renvoie un JWT pour authentification + Master Salt + Credentials (Vault)
     """
     result = await user_service.login(user.username, user.password, user.jwt_expir, db)
     if result["status"] != 200:
