@@ -20,7 +20,6 @@ class CredentialOut(BaseModel):
     username: constr(min_length=1, strip_whitespace=True)
     ciphertext: Optional[constr(min_length=1, strip_whitespace=True)] = None
     iv: Optional[constr(min_length=1, strip_whitespace=True)] = None
-    salt: Optional[constr(min_length=1, strip_whitespace=True)] = None
     description: Optional[constr(min_length=1, strip_whitespace=True)] = None
     user_id: int
 

@@ -3,18 +3,17 @@ from dao.user import get_user_by_id
 from core.hashing import verify_password
 from typing import Optional
 
-async def create(domain: str, username: str, ciphertext: str, iv: str, salt: str, description: str, user_id: int, db) -> dict:
+async def create(domain: str, username: str, ciphertext: str, iv: str, description: str, user_id: int, db) -> dict:
     """
     Création d'un credential.
     ciphertext : ciphertext côté client
     iv : IV utilisé pour AES-GCM (base64)
-    salt : salt pour dérivation de clé (base64)
     """
     user = await get_user_by_id(user_id, db)
     if not user:
         return {"status": 404, "message": "User not found"}
 
-    created = await dao_credential.create_credential(domain, username, ciphertext, iv, salt, description, user_id, db)
+    created = await dao_credential.create_credential(domain, username, ciphertext, iv, description, user_id, db)
     if created:
         return {"status": 201, "message": "Credential created successfully"}
     return {"status": 500, "message": "Failed to create credential"}

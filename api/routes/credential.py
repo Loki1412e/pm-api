@@ -40,7 +40,7 @@ async def get_credentials_by_user_id(
 @router.get("/read/{credential_id}", response_model=dict)
 async def read_credential(credential_id: int, userJWT=Depends(jwt_required), db: AsyncSession = Depends(get_db)):
     """
-    Retourne ciphertext, iv et salt pour que le client puisse déchiffrer localement
+    Retourne ciphertext et iv pour que le client puisse déchiffrer localement
     """
     result = await credentials_service.get_credential_by_id_and_user_id(credential_id, userJWT["user_id"], db)
     if result["status"] != 200:
