@@ -12,7 +12,7 @@ class CredentialUpdate(BaseModel):
     new_site: Optional[constr(min_length=1, strip_whitespace=True)] = None
     new_username: Optional[constr(min_length=1, strip_whitespace=True)] = None
     new_ciphertext: Optional[constr(min_length=1, strip_whitespace=True)] = None
-    new_description: Optional[constr(min_length=1, strip_whitespace=True)] = None
+    new_description: Optional[constr(min_length=0, strip_whitespace=True)] = None
 
 class CredentialOut(BaseModel):
     id: int
@@ -20,7 +20,7 @@ class CredentialOut(BaseModel):
     username: constr(min_length=1, strip_whitespace=True)
     ciphertext: Optional[constr(min_length=1, strip_whitespace=True)] = None
     iv: Optional[constr(min_length=1, strip_whitespace=True)] = None
-    description: Optional[constr(min_length=1, strip_whitespace=True)] = None
+    description: Optional[constr(min_length=0, strip_whitespace=True)] = None
     user_id: int
 
     class Config:
