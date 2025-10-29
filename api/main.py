@@ -1,9 +1,9 @@
 import uvicorn
-from datetime import datetime, timezone # <--- VÉRIFIEZ CECI
+from datetime import datetime, timezone
 import json
 
-from fastapi import FastAPI, Request, Response # <--- VÉRIFIEZ CECI
-from fastapi.responses import JSONResponse # <--- VÉRIFIEZ CECI
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import URL_PATH_PREFIX, API_PORT
 
@@ -16,7 +16,7 @@ from routes import user, credential, utils
 app = FastAPI(
     title="Password Manager API",
     description="API pour gérer les utilisateurs et leurs credentials",
-    version="0.1.1",
+    version="1.0.0",
     root_path=URL_PATH_PREFIX,
     docs_url="/docs",
     redoc_url="/redoc",
