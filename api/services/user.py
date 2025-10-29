@@ -1,5 +1,5 @@
 from dao import user as dao_user
-from dao.credential import get_credentials_by_user_id
+from dao.credential import get_credentials_by_user_id, create_credential
 from core.hashing import hash_password, verify_password
 from core.jwt import generate_jwt
 
@@ -9,10 +9,27 @@ async def create(user, db) -> dict:
     if existing_user:
         return {"status": 401, "message": "Username already exists"}
 
-    created = await dao_user.create_user(user.username, hash_password(user.password), db)
-    if created:
-        return {"status": 201, "message": "User created successfully"}
-    return {"status": 500, "message": "Failed to create user"}
+    # Renvoie l'ID de l'utilisateur
+    new_user = await dao_user.create_user(user.username, hash_password(user.password), db)
+    if not new_user:
+        return {"status": 500, "message": "Failed to create user"}
+
+    # passwd == 'PM:<username>'
+    verificationCredential = await create_credential(
+        "password-manager",
+        user.username,
+        user.ciphertext,
+        user.iv,
+        user.salt,
+        "Verification Master Password",
+        new_user.id,
+        db
+    )
+    if not verificationCredential:
+        await dao_user.delete_user(new_user.id, db)
+        return {"status": 500, "message": "Failed to create user credential, user deleted"}
+
+    return {"status": 201, "message": "User created successfully"}
 
 
 async def login(username: str, password: str, jwt_expir: int, db) -> dict:

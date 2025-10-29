@@ -16,7 +16,7 @@ from routes import user, credential, utils
 app = FastAPI(
     title="Password Manager API",
     description="API pour gérer les utilisateurs et leurs credentials",
-    version="1.0.0",
+    version="1.0.1",
     root_path=URL_PATH_PREFIX,
     docs_url="/docs",
     redoc_url="/redoc",

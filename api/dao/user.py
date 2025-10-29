@@ -15,11 +15,12 @@ async def create_user(username: str, password_hash: str, db: AsyncSession) -> bo
     db.add(user)
     try:
         await db.commit()
-        return True
+        await db.refresh(user)
+        return user
     except Exception as e:
         await db.rollback()
         print(f"Erreur create_user: {e}")
-        return False
+        return None
 
 # async def get_all_users_id(db: AsyncSession):
 #     result = await db.execute(select(User.id))
