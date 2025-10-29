@@ -58,6 +58,7 @@ async def update_credential(credential_id: int, credential: CredentialUpdate, us
         new_site=credential.new_site,
         new_username=credential.new_username,
         new_ciphertext=credential.new_ciphertext,
+        new_iv=credential.new_iv,
         new_description=credential.new_description,
         db=db
     )

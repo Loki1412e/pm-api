@@ -61,7 +61,7 @@ async def get_credential_by_id_and_user_id(credential_id: int, user_id: int, db)
     }
 
 
-async def update(credential_id: int, user_id: int, new_site: str = None, new_username: str = None, new_ciphertext: str = None, new_description: str = None, db=None) -> dict:
+async def update(credential_id: int, user_id: int, new_site: str = None, new_username: str = None, new_ciphertext: str = None, new_iv: str = None, new_description: str = None, db=None) -> dict:
     """
     Mise à jour d'un credential.
     Le mot de passe doit être déjà chiffré côté client.
@@ -73,9 +73,10 @@ async def update(credential_id: int, user_id: int, new_site: str = None, new_use
     new_site = credential.domain if new_site is None else new_site
     new_username = credential.username if new_username is None else new_username
     new_ciphertext = credential.ciphertext if new_ciphertext is None else new_ciphertext
+    new_iv = credential.iv if new_iv is None else new_iv
     new_description = credential.description if new_description is None else new_description
 
-    updated = await dao_credential.update_credential(credential_id, new_site, new_username, new_ciphertext, new_description, db)
+    updated = await dao_credential.update_credential(credential_id, new_site, new_username, new_ciphertext, new_iv, new_description, db)
     if updated:
         return {"status": 200, "message": "Credential updated successfully"}
     return {"status": 500, "message": "Failed to update credential"}
