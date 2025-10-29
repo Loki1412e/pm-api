@@ -10,7 +10,6 @@ class Credential(Base):
     username = Column(String(256), nullable=False)
     ciphertext = Column(String(512), nullable=False)
     iv = Column(String(24), nullable=False)
-    salt = Column(String(24), nullable=False)
     description = Column(String(512), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)

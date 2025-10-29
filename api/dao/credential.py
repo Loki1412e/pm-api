@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.credential import Credential
 from typing import Optional
 
-async def create_credential(domain: str, username: str, ciphertext: str, iv: str, salt: str, description: str, user_id: int, db: AsyncSession) -> bool:
-    cred = Credential(domain=domain, username=username, ciphertext=ciphertext, iv=iv, salt=salt, description=description, user_id=user_id)
+async def create_credential(domain: str, username: str, ciphertext: str, iv: str, description: str, user_id: int, db: AsyncSession) -> bool:
+    cred = Credential(domain=domain, username=username, ciphertext=ciphertext, iv=iv, description=description, user_id=user_id)
     db.add(cred)
     try:
         await db.commit()
@@ -37,11 +37,11 @@ async def get_credential_by_id_and_user_id(credential_id: int, user_id: int, db:
     )
     return result.scalars().first()
 
-async def update_credential(credential_id: int, domain: str, username: str, ciphertext: str, description: str, db: AsyncSession) -> bool:
+async def update_credential(credential_id: int, domain: str, username: str, ciphertext: str, iv: str, description: str, db: AsyncSession) -> bool:
     stmt = (
         update(Credential)
         .where(Credential.id == credential_id)
-        .values(domain=domain, username=username, ciphertext=ciphertext, description=description)
+        .values(domain=domain, username=username, ciphertext=ciphertext, iv=iv, description=description)
         .execution_options(synchronize_session="fetch")
     )
     try:

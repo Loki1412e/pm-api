@@ -10,7 +10,7 @@ async def create(user, db) -> dict:
         return {"status": 401, "message": "Username already exists"}
 
     # Renvoie l'ID de l'utilisateur
-    new_user = await dao_user.create_user(user.username, hash_password(user.password), db)
+    new_user = await dao_user.create_user(user.username, hash_password(user.password), user.masterSalt, db)
     if not new_user:
         return {"status": 500, "message": "Failed to create user"}
 
@@ -20,7 +20,6 @@ async def create(user, db) -> dict:
         user.username,
         user.ciphertext,
         user.iv,
-        user.salt,
         "Verification Master Password",
         new_user.id,
         db

@@ -10,8 +10,8 @@ async def get_user_by_id(user_id: int, db: AsyncSession):
     result = await db.execute(select(User).where(User.id == user_id))
     return result.scalars().first()
 
-async def create_user(username: str, password_hash: str, db: AsyncSession) -> bool:
-    user = User(username=username, password=password_hash)
+async def create_user(username: str, password_hash: str, masterSalt: str, db: AsyncSession) -> bool:
+    user = User(username=username, password=password_hash, masterSalt=masterSalt)
     db.add(user)
     try:
         await db.commit()
