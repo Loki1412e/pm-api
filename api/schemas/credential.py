@@ -6,7 +6,7 @@ class CredentialCreate(BaseModel):
     username: constr(min_length=1, strip_whitespace=True)
     ciphertext: constr(min_length=1, strip_whitespace=True)
     iv: constr(min_length=1, strip_whitespace=True)
-    description: Optional[constr(min_length=1, strip_whitespace=True)] = None
+    description: Optional[constr(min_length=0, strip_whitespace=True)] = None
 
 class CredentialUpdate(BaseModel):
     new_site: Optional[constr(min_length=1, strip_whitespace=True)] = None
