@@ -16,7 +16,6 @@ async def create_credential(credential: CredentialCreate, userJWT=Depends(jwt_re
         username=credential.username,
         ciphertext=credential.ciphertext,
         iv=credential.iv,
-        salt=credential.salt,
         description=credential.description,
         user_id=userJWT["user_id"],
         db=db

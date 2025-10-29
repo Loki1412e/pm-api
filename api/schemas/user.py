@@ -6,7 +6,7 @@ class UserCreate(BaseModel):
     password: constr(min_length=1, strip_whitespace=True)
     ciphertext: constr(min_length=1, strip_whitespace=True)
     iv: constr(min_length=1, strip_whitespace=True)
-    salt: constr(min_length=1, strip_whitespace=True)
+    masterSalt: constr(min_length=1, strip_whitespace=True)
 
 class UserLogin(BaseModel):
     username: constr(min_length=1, strip_whitespace=True)

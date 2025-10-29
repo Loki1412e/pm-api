@@ -31,7 +31,7 @@ async def get_credentials_by_user_id(user_id: int, domain: Optional[str], userna
             "id": c.id,
             "domain": c.domain,
             "username": c.username,
-            "password": c.ciphertext and c.iv and c.salt, # Indique si le mot de passe peut être déchiffré
+            "password": c.ciphertext and c.iv, # Indique si le mot de passe peut être déchiffré
             "description": c.description,
             "created_at": c.created_at,
             "updated_at": c.updated_at
@@ -56,7 +56,6 @@ async def get_credential_by_id_and_user_id(credential_id: int, user_id: int, db)
             "username": credential.username,
             "ciphertext": credential.ciphertext,
             "iv": credential.iv,
-            "salt": credential.salt,
             "description": credential.description
         }
     }

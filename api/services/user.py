@@ -46,7 +46,6 @@ async def login(username: str, password: str, jwt_expir: int, db) -> dict:
             "username": c.username,
             "ciphertext": c.ciphertext,
             "iv": c.iv,
-            "salt": c.salt,
             "description": c.description,
             "created_at": c.created_at,
             "updated_at": c.updated_at
